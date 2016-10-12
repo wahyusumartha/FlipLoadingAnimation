@@ -57,7 +57,7 @@ class FlipLoadingAnimationView: UIView, FlipLoadingAnimationViewProtocol {
     var backImageView: UIImageView?
     
     var previousFlipState: FlipDirectionState = .flipStop
-    var currentFlipState: FlipDirectionState = .flipFromLeftToRight
+    var currentFlipState: FlipDirectionState = .flipFromTopToBottom
     
     var animationCount = 0
     
@@ -88,6 +88,11 @@ class FlipLoadingAnimationView: UIView, FlipLoadingAnimationViewProtocol {
         frontView?.layer.backgroundColor = frontColor.CGColor
         frontView?.center = self.center
         
+        let frontImage = imageNames[0]
+        moveImageObjectsInArray()
+        let frontImageView = UIImageView(image: UIImage(named: frontImage))
+        frontView?.addSubview(frontImageView)
+        
         backView = UIView()
         backView?.backgroundColor = UIColor.clearColor()
         backView?.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height)
@@ -98,8 +103,14 @@ class FlipLoadingAnimationView: UIView, FlipLoadingAnimationViewProtocol {
         backView?.layer.backgroundColor = backColor.CGColor
         backView?.center = self.center
         
+        let backImage = imageNames[0]
+        moveImageObjectsInArray()
+        let backImageView = UIImageView(image: UIImage(named: backImage))
+        backView?.addSubview(backImageView)
+
+        
         previousFlipState = .flipStop
-        currentFlipState = .flipFromRightToLeft
+        currentFlipState = .flipFromTopToBottom
         animationCount = 0
     }
     
@@ -521,30 +532,31 @@ class FlipLoadingAnimationView: UIView, FlipLoadingAnimationViewProtocol {
             frontView?.layer.backgroundColor = backView?.layer.backgroundColor
             backView?.layer.backgroundColor = colorRef
             
-//            switch (previousFlipState) {
-//            case .flipFromBottomToTop:
-//                currentFlipState = .flipFromRightToLeft;
-//            case .flipFromTopToBottom:
-//                currentFlipState = .flipFromLeftToRight;
-//            case .flipFromLeftToRight:
-//                currentFlipState = .flipFromBottomToTop;
-//            case .flipFromRightToLeft:
-//                currentFlipState = .flipFromTopToBottom;
-//            default:
-//                break
-//            }
-
             switch (previousFlipState) {
-            case .flipFromRightToLeft:
+            case .flipFromBottomToTop:
                 currentFlipState = .flipFromRightToLeft;
+            case .flipFromTopToBottom:
+                currentFlipState = .flipFromLeftToRight;
+            case .flipFromLeftToRight:
+                currentFlipState = .flipFromBottomToTop;
+            case .flipFromRightToLeft:
+                currentFlipState = .flipFromTopToBottom;
             default:
                 break
             }
-
             
             let backColor = colors[0]
             moveColorObjectsInArray()
             backView?.layer.backgroundColor = backColor.CGColor
+            
+            for subView in backView!.subviews {
+                subView.removeFromSuperview()
+            }
+            
+            let backImage = imageNames[0]
+            moveImageObjectsInArray()
+            let backImageView = UIImageView(image: UIImage(named: backImage))
+            backView?.addSubview(backImageView)
             
             getFlipDirectionState()
         default:
